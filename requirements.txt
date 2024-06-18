@@ -1,0 +1,6 @@
+discord.py
+pycron
+pandas
+yfinance
+asyncio
+python-dotenv
