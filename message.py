@@ -2,7 +2,8 @@ class Message:
     index_dict = {
         'sp500': ['S&P500', 'https://finance.yahoo.com/quote/%5EGSPC/chart/'],
         'nasdaq': ['NASDAQ-100', 'https://finance.yahoo.com/quote/%5ENDX/chart/'],
-        'dax' : ['DAX', 'https://de.finance.yahoo.com/quote/%5EGDAXI/']
+        'dax' : ['DAX', 'https://de.finance.yahoo.com/quote/%5EGDAXI/chart/'],
+        'tyx' : ['TreasuryYield30', 'https://finance.yahoo.com/quote/%5ETYX/chart/']
     }
 
     def alarm_message(self, index, signal):
@@ -17,4 +18,3 @@ class Message:
 
     def report_message(self, index, signal):
         return ''
-
