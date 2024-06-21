@@ -52,23 +52,31 @@ class Scraper:
         # Calculate yesterday's closing price
         yesterday_close = daily_data['Close'].iloc[-2]
 
+        # Price is over/under SMA
+        position = "over" if latest_price > daily_data['200SMA'].iloc[-2] else "under"
+
         # Calculate yesterday's gap between closing price and SMA
         yesterday_diff = yesterday_close - daily_data['200SMA'].iloc[-2]
 
         # Determine if the gap between SMA and price has increased or decreased since yesterday
         gap_change_direction = "Increased" if abs(today_diff) > abs(yesterday_diff) else "Decreased"
 
+        # Determine distance percentage between price and sma
+        distance_percentage_today = "{:.2f}".format(abs(((latest_price / current_200SMA)-1)*100))
+        distance_percentage_yesterday = "{:.2f}".format(abs(((yesterday_close / daily_data['200SMA'].iloc[-2])-1)*100))
+
         # Output the results
-        s1 = f"Crossed above {sma_days}-day SMA anytime today: {crossed_above_anytime}\n"
-        s2 = f"Crossed below {sma_days}-day SMA anytime today: {crossed_below_anytime}\n"
+        s0 = f"Price is **{position}** SMA.\n"
+        s1 = f"Crossed above {sma_days}-day SMA anytime today: **{crossed_above_anytime}**\n"
+        s2 = f"Crossed below {sma_days}-day SMA anytime today: **{crossed_below_anytime}**\n"
         s3 = f"Latest price at {formatted_time}: {latest_price:.2f}\n" if latest_price is not None else "No data available for the latest price\n"
         #s4 = f"Signal at {formatted_time}: {signal}\n" if latest_price is not None else "Signal: No data available\n"
         s5 = f"Current {sma_days}-day SMA: {current_200SMA:.2f}\n"
-        s6 = f"Difference between today's closing price and {sma_days}-day SMA: {today_diff:.2f}\n"
-        s7 = f"Difference between yesterday's closing price and {sma_days}-day SMA: {yesterday_diff:.2f}\n"
-        s8 = f"Gap between price and SMA since yesterday: {gap_change_direction}\n"
+        s6 = f"Difference between today's closing price and {sma_days}-day SMA: {today_diff:.2f}\t**{distance_percentage_today}%**\n"
+        s7 = f"Difference between yesterday's closing price and {sma_days}-day SMA: {yesterday_diff:.2f}\t{distance_percentage_yesterday}%\n"
+        s8 = f"Gap between price and SMA since yesterday: **{gap_change_direction}**\n"
 
-        return "".join([s1, s2, s3, s5, s6, s7, s8])
+        return "".join([s1, s2, s0, s3, s5, s6, s7, s8])
 
 
     # generates hold, buy or sell signal
