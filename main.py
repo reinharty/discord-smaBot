@@ -26,6 +26,9 @@ channel_nasdaq_report_id = int(os.getenv('NASDAQ_REPORT'))
 channel_dax_alarm_id = int(os.getenv('DAX_ALARM_200'))
 channel_dax_report_id = int(os.getenv('DAX_REPORT'))
 
+channel_tyx_alarm_id = int(os.getenv('TYX_ALARM_60'))
+channel_tyx_report_id = int(os.getenv('TYX_REPORT'))
+
 channel_debug_id = int(os.getenv('DEBUG'))
 
 token = os.getenv('TOKEN')
@@ -46,8 +49,7 @@ async def scheduler():
     print('Scheduler started')
     while True:
         #schedule.run_pending()
-        if pycron.is_now('45 21 * * mon-fri'):
-        #if pycron.is_now('44 21 * * *'):
+        if pycron.is_now(scedule):
             await jobs()
             await asyncio.sleep(60)
         else:
@@ -91,6 +93,19 @@ async def jobs():
     # report
     channel = client.get_channel(channel_dax_report_id)
     message = Scraper().daily_report("^GDAXI", 200)
+    await channel.send(message)
+
+    # Treasury Yield 30
+    # alarm
+    channel = client.get_channel(channel_tyx_alarm_id)
+    signal = Scraper().get_signal("^TYX", 60)
+    message = Message().alarm_message('tyx', signal)
+    await channel.send(message)
+
+    # Treasury Yield 30
+    # report
+    channel = client.get_channel(channel_tyx_report_id)
+    message = Scraper().daily_report("^TYX", 60)
     await channel.send(message)
 
 #load_dotenv()
