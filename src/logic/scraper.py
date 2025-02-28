@@ -26,6 +26,19 @@ class Scraper:
         sma_series = Scraper.calc_sma(data.daily, sma_days)
         return Result(data.intraday["Close"].iloc[-1], data.daily["Close"].iloc[-2], sma_series.iloc[-1], sma_series.iloc[-2])
 
+    @staticmethod
+    def get_signal(ticker, sma_days=200, offset=0.0):
+
+        ticker_data = yf.Ticker(ticker)
+        daily_data = ticker_data.history(period='12mo')
+        intraday_data = ticker_data.history(period='1d', interval='1m')
+
+        data = Data(daily_data, intraday_data)
+        result = Scraper.calculator(data, sma_days)
+
+        signal = Scraper.generate_signal(result, offset)
+        return(signal)
+
     # Geht nur wenn Handelstag in USA begonnen hat
     # creates a report of some different data
     def daily_report(self, ticker, sma_days):
@@ -114,18 +127,5 @@ class Scraper:
         if intraday_data.empty is True:
             return "No data today"
 
-    @staticmethod
-    def get_signal(self, ticker, sma_days=200, offset=0.0):
 
-        ticker_data = yf.Ticker(ticker)
-        daily_data = ticker_data.history(period='12mo')
-        intraday_data = ticker_data.history(period='1d', interval='1m')
-
-        print(intraday_data['Close'])
-
-        data = Data(daily_data, intraday_data)
-        result = Scraper.calculator(data, sma_days)
-
-        signal = Scraper.generate_signal(result, offset)
-        return(signal)
 
