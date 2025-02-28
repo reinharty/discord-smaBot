@@ -12,7 +12,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY .env .
 
 ADD main.py .
-ADD scraper.py .
+ADD /src/dataclasses/ /src/dataclasses/
+ADD /src/logic/ /src/logic/
 ADD message.py .
 
 CMD ["python", "./main.py"]
