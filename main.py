@@ -31,7 +31,7 @@ channel_dax_alarm_id = int(os.getenv('DAX_ALARM_200'))
 channel_dax_report_id = int(os.getenv('DAX_REPORT'))
 
 channel_tyx_alarm_id = int(os.getenv('TYX_ALARM_60'))
-channel_tyx_report_id = int(os.getenv('TYX_REPORT'))
+channel_tlt_report_id = int(os.getenv('TYX_REPORT'))
 
 channel_debug_id = int(os.getenv('DEBUG'))
 
@@ -58,9 +58,21 @@ async def on_ready():
     message = Message().alarm_message('tlt', signal)
     await channel.send("debug " + message)
 
+    # DAX
+    # report
+    channel = client.get_channel(channel_debug_id)
+    message = Scraper.get_report("^GDAXI", 200)
+    await channel.send(message)
 
-    #await jobs()
-    #await reports()
+    # Treasury Yield 30
+    # report
+    channel = client.get_channel(channel_debug_id)
+    message = Scraper.get_report("TLT", 60)
+    await channel.send(message)
+
+
+    # await jobs()
+    # await reports()
     await scheduler()  # Start the scheduler loop
 
 
@@ -117,25 +129,25 @@ async def reports():
     # SP500
     # report
     channel = client.get_channel(channel_sp500_report_id)
-    message = Scraper().daily_report("^GSPC", 200)
+    message = Scraper.get_report("^GSPC", 200)
     await channel.send(message)
 
     # NASDAQ
     # report
     channel = client.get_channel(channel_nasdaq_report_id)
-    message = Scraper().daily_report("^NDX", 220)
+    message = Scraper.get_report("^NDX", 220)
     await channel.send(message)
 
     # DAX
     # report
     channel = client.get_channel(channel_dax_report_id)
-    message = Scraper().daily_report("^GDAXI", 200)
+    message = Scraper.get_report("^GDAXI", 200)
     await channel.send(message)
 
     # Treasury Yield 30
     # report
-    channel = client.get_channel(channel_tyx_report_id)
-    message = Scraper().daily_report("TLT", 60)
+    channel = client.get_channel(channel_tlt_report_id)
+    message = Scraper.get_report("TLT", 60)
     await channel.send(message)
 
 
