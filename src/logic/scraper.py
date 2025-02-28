@@ -1,6 +1,7 @@
 import yfinance as yf
 from datetime import datetime, timedelta
 
+from message import Message
 from src.dataclasses.data import Data
 from src.dataclasses.result import Result
 
@@ -17,14 +18,35 @@ class Scraper:
 
     @staticmethod
     def calc_sma(daily_data, sma_days):
+        #TODO add current price to daily_data
         # Calculate the SMA
         return daily_data['Close'].rolling(window=sma_days).mean()
+
+    @staticmethod
+    def calc_diff_between_price_and_sma(price, sma)->float:
+        return abs(((price / sma) - 1) * 100)
 
     @staticmethod
     def calculator(data: Data, sma_days: int) -> Result:
 
         sma_series = Scraper.calc_sma(data.daily, sma_days)
-        return Result(data.intraday["Close"].iloc[-1], data.daily["Close"].iloc[-2], sma_series.iloc[-1], sma_series.iloc[-2])
+
+        current_price = data.intraday["Close"].iloc[-1]
+        yesterday_price = data.daily["Close"].iloc[-2]
+        current_sma = sma_series.iloc[-1]
+        yesterday_sma = sma_series.iloc[-2]
+
+        today_diff = current_price - current_sma
+        yesterday_diff = yesterday_price - yesterday_sma
+
+        current_distance = Scraper.calc_diff_between_price_and_sma(current_price, current_sma)
+        yesterday_distance = Scraper.calc_diff_between_price_and_sma(yesterday_price, yesterday_sma)
+
+        return Result(sma_days,
+                      current_price, yesterday_price,
+                      current_sma, yesterday_sma,
+                      today_diff, yesterday_diff,
+                      current_distance, yesterday_distance)
 
     @staticmethod
     def get_signal(ticker, sma_days=200, offset=0.0):
@@ -38,6 +60,19 @@ class Scraper:
 
         signal = Scraper.generate_signal(result, offset)
         return(signal)
+
+    #TODO handle result object better so that it must not be generated twice
+    @staticmethod
+    def get_report(ticker, sma_days=200, offset=0.0):
+
+        ticker_data = yf.Ticker(ticker)
+        daily_data = ticker_data.history(period='12mo')
+        intraday_data = ticker_data.history(period='1d', interval='1m')
+
+        data = Data(daily_data, intraday_data)
+        result = Scraper.calculator(data, sma_days)
+
+        return Scraper().daily_report3(result)
 
     # Geht nur wenn Handelstag in USA begonnen hat
     # creates a report of some different data
@@ -127,5 +162,10 @@ class Scraper:
         if intraday_data.empty is True:
             return "No data today"
 
+    def daily_report3(self, result: Result):
+        message = Message.get_position(result)
+        message = message + Message.get_distances(result)
+        message += Message.get_direction(result)
 
+        return message
 
