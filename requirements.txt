@@ -1,6 +1,6 @@
+yfinance == 0.2.54
 discord.py
 pycron
 pandas
-yfinance
 asyncio
 python-dotenv
