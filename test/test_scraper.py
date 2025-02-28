@@ -3,14 +3,13 @@ from unittest import TestCase
 import numpy as np
 import pandas as pd
 
+from message import Message
 from src.dataclasses.data import Data
 from src.dataclasses.result import Result
 from src.logic.scraper import Scraper
 
 
 class TestScraper(TestCase):
-    # def test_daily_report(self):
-    #     self.fail()
 
     def test_calculate_SMA(self):
         data_file = "test-data/Output-daily-data-tlt2.csv"
@@ -30,7 +29,9 @@ class TestScraper(TestCase):
         expected = Result(current_price=np.float64(89.19499969482422),
                           yesterday_close=np.float64(89.88999938964844),
                           current_sma=np.float64(92.70424987792968),
-                          yesterday_sma=np.float64(92.70074989318847))
+                          yesterday_sma=np.float64(92.70074989318847),
+                          current_distance=3.7854253583048725,
+                          yesterday_distance=3.776401969757437)
 
         self.assertEqual(expected, result)
 
@@ -111,3 +112,38 @@ class TestScraper(TestCase):
 
         expected = "sell"
         self.assertEqual(expected, Scraper().generate_signal(result, 0.025))
+
+    def test_message_get_position_under_sma(self):
+        data_file = "test-data/daily-sell.txt"
+        daily_data = pd.read_csv(data_file, parse_dates=["Date"], index_col="Date")
+        intraday_file = "test-data/intraday-sell.txt"  # Heutige 15-Minuten-Kerzen
+        intraday = pd.read_csv(intraday_file, parse_dates=["Datetime"], index_col="Datetime")
+
+        data = Data(daily_data, intraday)
+        result = Scraper.calculator(data, 200)
+
+        expected = f"Price is **under** SMA.\n"
+        self.assertEqual(expected, Message().get_position(result))
+
+    def test_message_get_position_over_sma(self):
+        data_file = "test-data/daily-buy.txt"
+        daily_data = pd.read_csv(data_file, parse_dates=["Date"], index_col="Date")
+        intraday_file = "test-data/intraday-buy.txt"  # Heutige 15-Minuten-Kerzen
+        intraday = pd.read_csv(intraday_file, parse_dates=["Datetime"], index_col="Datetime")
+
+        data = Data(daily_data, intraday)
+        result = Scraper.calculator(data, 200)
+
+        expected = f"Price is **over** SMA.\n"
+        self.assertEqual(expected, Message().get_position(result))
+
+    def test_Message(self):
+        data_file = "test-data/daily-hold.txt"
+        daily_data = pd.read_csv(data_file, parse_dates=["Date"], index_col="Date")
+        intraday_file = "test-data/intraday-hold.txt"  # Heutige 15-Minuten-Kerzen
+        intraday = pd.read_csv(intraday_file, parse_dates=["Datetime"], index_col="Datetime")
+
+        data = Data(daily_data, intraday)
+        result = Scraper.calculator(data, 200)
+
+        print(Scraper().daily_report3(result))
