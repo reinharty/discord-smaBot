@@ -4,4 +4,4 @@ import pandas as pd
 @dataclass
 class Data:
     daily: pd.DataFrame
-    intraday: pd.DataFramegit
+    intraday: pd.DataFrame
