@@ -83,6 +83,7 @@ async def scheduler():
         #schedule.run_pending()
         if pycron.is_now(scedule):
             await jobs()
+            await reports()
             await asyncio.sleep(60)
         else:
             await asyncio.sleep(15)
