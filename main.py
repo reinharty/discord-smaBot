@@ -22,7 +22,7 @@ channel_sp500_alarm_id = int(os.getenv('SP500_ALARM_200'))
 channel_sp500_report_id = int(os.getenv('SP500_REPORT'))
 
 channel_sp500_190_alarm_id = int(os.getenv('SP500_ALARM_190'))
-#channel_sp500_190_report_id = int(os.getenv('DEBUG'))
+channel_sp500_190_report_id = int(os.getenv('SP500_REPORT_OFFSET'))
 
 channel_nasdaq_alarm_id = int(os.getenv('NASDAQ_ALARM_220'))
 channel_nasdaq_report_id = int(os.getenv('NASDAQ_REPORT'))
@@ -45,30 +45,36 @@ async def on_ready():
     debug_channel = client.get_channel(channel_debug_id)
     await debug_channel.send("Online again at " + datetime.today().strftime("%Y-%m-%d-%H:%M:%S") + " " + scedule)
     await debug_channel.send("yfinance version = " + yf.__version__)
+    await debug_channel.send("version = 7.3.2025")
 
-    channel = client.get_channel(channel_debug_id)
-    signal = Scraper.get_signal("^GDAXI", 200, 0.025)
-    message = Message().alarm_message('dax', signal)
-    await channel.send("debug " + message)
+    # channel = client.get_channel(channel_debug_id)
+    # signal = Scraper.get_signal("^GDAXI", 200, 0.025)
+    # message = Message().alarm_message('dax', signal)
+    # await channel.send("debug " + message)
+    #
+    # # Treasury Yield 30
+    # # alarm
+    # channel = client.get_channel(channel_debug_id)
+    # signal = Scraper().get_signal("TLT", 60)
+    # message = Message().alarm_message('tlt', signal)
+    # await channel.send("debug " + message)
+    #
+    # # DAX
+    # # report
+    # channel = client.get_channel(channel_debug_id)
+    # message = Scraper.get_report("^GDAXI", 200)
+    # await channel.send(message)
+    #
+    # # Treasury Yield 30
+    # # report
+    # channel = client.get_channel(channel_debug_id)
+    # message = Scraper.get_report("TLT", 60)
+    # await channel.send(message)
 
-    # Treasury Yield 30
-    # alarm
-    channel = client.get_channel(channel_debug_id)
-    signal = Scraper().get_signal("TLT", 60)
-    message = Message().alarm_message('tlt', signal)
-    await channel.send("debug " + message)
+    # channel = client.get_channel(channel_debug_id)
+    # message = Scraper().get_report("^SP500TR", 190, 0.025)
+    # await channel.send(message + " ^SP500TR, SMA = 190, offset = 2.5%")
 
-    # DAX
-    # report
-    channel = client.get_channel(channel_debug_id)
-    message = Scraper.get_report("^GDAXI", 200)
-    await channel.send(message)
-
-    # Treasury Yield 30
-    # report
-    channel = client.get_channel(channel_debug_id)
-    message = Scraper.get_report("TLT", 60)
-    await channel.send(message)
 
 
     # await jobs()
@@ -132,6 +138,12 @@ async def reports():
     channel = client.get_channel(channel_sp500_report_id)
     message = Scraper.get_report("^GSPC", 200)
     await channel.send(message)
+
+    # SP500
+    # report
+    channel = client.get_channel(channel_sp500_190_report_id)
+    message = Scraper().get_report("^SP500TR", 190, 0.025)
+    await channel.send(message + " ^SP500TR, SMA = 190, offset = 2.5%")
 
     # NASDAQ
     # report
