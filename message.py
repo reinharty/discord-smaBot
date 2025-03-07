@@ -4,6 +4,7 @@ from src.dataclasses.result import Result
 class Message:
     index_dict = {
         'sp500': ['S&P500', 'https://finance.yahoo.com/quote/%5EGSPC/chart/'],
+        'sp500tr': ['S&P500TR', "https://finance.yahoo.com/quote/%5ESP500TR/chart/"],
         'nasdaq': ['NASDAQ-100', 'https://finance.yahoo.com/quote/%5ENDX/chart/'],
         'dax' : ['DAX', 'https://de.finance.yahoo.com/quote/%5EGDAXI/chart/'],
         'tlt' : ['TLT', 'https://finance.yahoo.com/quote/TLT/chart/']
