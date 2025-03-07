@@ -26,12 +26,15 @@ class TestScraper(TestCase):
         data = Data(daily_data, intraday)
         result = Scraper.calculator(data, 200)
 
-        expected = Result(current_price=np.float64(89.19499969482422),
+        expected = Result(sma=200,
+                          current_price=np.float64(89.19499969482422),
                           yesterday_close=np.float64(89.88999938964844),
                           current_sma=np.float64(92.70424987792968),
                           yesterday_sma=np.float64(92.70074989318847),
-                          current_distance=3.7854253583048725,
-                          yesterday_distance=3.776401969757437)
+                          current_diff=np.float64(-3.5092501831054648),
+                          yesterday_diff=np.float64(-2.810750503540035),
+                          current_distance=np.float64(3.7854253583048725),
+                          yesterday_distance=np.float64(3.032068787769926))
 
         self.assertEqual(expected, result)
 
@@ -122,7 +125,7 @@ class TestScraper(TestCase):
         data = Data(daily_data, intraday)
         result = Scraper.calculator(data, 200)
 
-        expected = f"Price is **under** SMA.\n"
+        expected = "Price is 92.0 and **under** 200-SMA of 92.75499988555909.\n"
         self.assertEqual(expected, Message().get_position(result))
 
     def test_message_get_position_over_sma(self):
@@ -134,7 +137,7 @@ class TestScraper(TestCase):
         data = Data(daily_data, intraday)
         result = Scraper.calculator(data, 200)
 
-        expected = f"Price is **over** SMA.\n"
+        expected = f"Price is 93.0 and **over** 200-SMA of 92.31499988555908.\n"
         self.assertEqual(expected, Message().get_position(result))
 
     def test_Message(self):
