@@ -18,7 +18,7 @@ class Scraper:
 
     @staticmethod
     def calc_sma(daily_data, sma_days):
-        #TODO add current price to daily_data
+        #TODO add current price to daily_data but requires knowledge if market is still open for this ticker
         # Calculate the SMA
         return daily_data['Close'].rolling(window=sma_days).mean()
 
@@ -72,8 +72,10 @@ class Scraper:
         data = Data(daily_data, intraday_data)
         result = Scraper.calculator(data, sma_days)
 
-        return Scraper().daily_report3(result)
-
+        if offset == 0.0:
+            return Scraper().daily_report3(result)
+        else:
+            return Scraper().daily_report_with_offset(result, offset)
     # Geht nur wenn Handelstag in USA begonnen hat
     # creates a report of some different data
     def daily_report(self, ticker, sma_days):
@@ -166,6 +168,13 @@ class Scraper:
         message = Message.get_position(result)
         message = message + Message.get_distances(result)
         message += Message.get_direction(result)
+
+        return message
+
+    def daily_report_with_offset(self, result: Result, offset):
+        message = Message.get_position(result)
+        message = message + Message.get_distances_with_offset(result, offset)
+        #message += Message.get_direction(result)
 
         return message
 
