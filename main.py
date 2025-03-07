@@ -47,33 +47,40 @@ async def on_ready():
     await debug_channel.send("yfinance version = " + yf.__version__)
     await debug_channel.send("version = 7.3.2025")
 
-    # channel = client.get_channel(channel_debug_id)
-    # signal = Scraper.get_signal("^GDAXI", 200, 0.025)
-    # message = Message().alarm_message('dax', signal)
-    # await channel.send("debug " + message)
-    #
-    # # Treasury Yield 30
-    # # alarm
-    # channel = client.get_channel(channel_debug_id)
-    # signal = Scraper().get_signal("TLT", 60)
-    # message = Message().alarm_message('tlt', signal)
-    # await channel.send("debug " + message)
-    #
-    # # DAX
-    # # report
-    # channel = client.get_channel(channel_debug_id)
-    # message = Scraper.get_report("^GDAXI", 200)
-    # await channel.send(message)
-    #
-    # # Treasury Yield 30
-    # # report
-    # channel = client.get_channel(channel_debug_id)
-    # message = Scraper.get_report("TLT", 60)
-    # await channel.send(message)
+    channel = client.get_channel(channel_debug_id)
+    signal = Scraper.get_signal("^GDAXI", 200, 0.025)
+    message = Message().alarm_message('dax', signal)
+    await channel.send("debug " + message)
 
-    # channel = client.get_channel(channel_debug_id)
-    # message = Scraper().get_report("^SP500TR", 190, 0.025)
-    # await channel.send(message + " ^SP500TR, SMA = 190, offset = 2.5%")
+    # Treasury Yield 30
+    # alarm
+    channel = client.get_channel(channel_debug_id)
+    signal = Scraper().get_signal("TLT", 60)
+    message = Message().alarm_message('tlt', signal)
+    await channel.send("debug " + message)
+
+    # DAX
+    # report
+    channel = client.get_channel(channel_debug_id)
+    message = Scraper.get_report("^GDAXI", 200)
+    await channel.send(message)
+
+    # Treasury Yield 30
+    # report
+    channel = client.get_channel(channel_debug_id)
+    message = Scraper.get_report("TLT", 60)
+    await channel.send(message)
+
+    # SP500TR
+    # alarm
+    channel = client.get_channel(channel_debug_id)
+    signal = Scraper().get_signal("^SP500TR", 190, 0.025)
+    message = Message().alarm_message('sp500tr', signal)
+    await channel.send(message + " ^SP500TR, SMA = 190, offset = 2.5%")
+    # report
+    channel = client.get_channel(channel_debug_id)
+    message = Scraper().get_report("^SP500TR", 190, 0.025)
+    await channel.send(message + " ^SP500TR, SMA = 190, offset = 2.5%")
 
 
 
@@ -107,7 +114,7 @@ async def jobs():
     # alarm
     channel = client.get_channel(channel_sp500_190_alarm_id)
     signal = Scraper().get_signal("^SP500TR", 190, 0.025)
-    message = Message().alarm_message('sp500', signal)
+    message = Message().alarm_message('sp500tr', signal)
     await channel.send(message + " ^SP500TR, SMA = 190, offset = 2.5%")
 
     # NASDAQ
