@@ -6,8 +6,8 @@ class Message:
         'sp500': ['S&P500', 'https://finance.yahoo.com/quote/%5EGSPC/chart/'],
         'sp500tr': ['S&P500TR', "https://finance.yahoo.com/quote/%5ESP500TR/chart/"],
         'nasdaq': ['NASDAQ-100', 'https://finance.yahoo.com/quote/%5ENDX/chart/'],
-        'dax' : ['DAX', 'https://de.finance.yahoo.com/quote/%5EGDAXI/chart/'],
-        'tlt' : ['TLT', 'https://finance.yahoo.com/quote/TLT/chart/']
+        'dax': ['DAX', 'https://de.finance.yahoo.com/quote/%5EGDAXI/chart/'],
+        'tlt': ['TLT', 'https://finance.yahoo.com/quote/TLT/chart/']
     }
 
     def alarm_message(self, index, signal):
@@ -27,7 +27,7 @@ class Message:
     def get_position(result: Result)-> str:
 
         position = "over" if result.current_price > result.current_sma else "under"
-        return f"Price is {result.current_price} and **{position}** {result.sma}-SMA of {result.current_sma}.\n"
+        return f"Price is {result.current_price} and **{position}** {result.sma_days}-SMA of {result.current_sma}.\n"
 
     @staticmethod
     def get_distances(result: Result)->str:
@@ -35,7 +35,7 @@ class Message:
         current_distance = "{:.2f}".format(result.current_distance)
         yesterday_distance = "{:.2f}".format(result.yesterday_distance)
 
-        return f"Difference between today's closing price and {result.sma}-day SMA: {result.current_diff:.2f}\t**{current_distance}%**\nDifference between yesterday's closing price and {result.sma}-day SMA: {result.yesterday_diff:.2f}\t{yesterday_distance}%\n"
+        return f"Difference between today's closing price and {result.sma_days}-day SMA: {result.current_diff:.2f}\t**{current_distance}%**\nDifference between yesterday's closing price and {result.sma_days}-day SMA: {result.yesterday_diff:.2f}\t{yesterday_distance}%\n"
 
     @staticmethod
     def get_direction(result: Result):
@@ -69,7 +69,7 @@ class Message:
         else:
             position_text = "Price is **between** high and low SMA\n"
 
-        text = f"""Differences between today's closing price and {result.sma}-day SMAs with {offset}% offset: 
+        text = f"""Differences between today's closing price and {result.sma_days}-day SMAs with {offset}% offset: 
         Current SMA without offset: {result.current_sma}
         SMA, distance in points, distance in percentage
         Current high sma: {current_sma_high}, {current_distance_high:.2f}, **{current_diff_high:.2f}%**
@@ -78,3 +78,20 @@ class Message:
         Yesterday low sma: {yesterday_sma_low}, {yesterday_distance_low:.2f}\t{yesterday_diff_low:.2f}%\n"""
 
         return position_text+text
+
+    @staticmethod
+    def get_alarms(result: Result)->str:
+        message = ""
+        if result.nightly_cross_to_above or result.nightly_cross_to_below or result.intraday_to_above or result.intraday_to_below == True:
+            message += '@everyone \n'
+
+        if result.nightly_cross_to_above:
+            message += 'Price crossed **above SMA** between yesterday Close and todays Open\n'
+        if result.nightly_cross_to_below:
+            message += 'Price crossed **under SMA** between yesterday Close and todays Open\n'
+        if result.intraday_to_above:
+            message += 'A cross from below to **above SMA** happened today!\n'
+        if result.intraday_to_below:
+            message += 'A cross from above to **below SMA** happened today!\n'
+
+        return message
