@@ -45,18 +45,20 @@ async def on_ready():
     debug_channel = client.get_channel(channel_debug_id)
     await debug_channel.send("Online again at " + datetime.today().strftime("%Y-%m-%d-%H:%M:%S") + " " + scedule)
     await debug_channel.send("yfinance version = " + yf.__version__)
-    await debug_channel.send("version = 7.3.2025")
+    await debug_channel.send("version = 10.3.2025")
 
     channel = client.get_channel(channel_debug_id)
-    signal = Scraper.get_signal("^GDAXI", 200, 0.025)
-    message = Message().alarm_message('dax', signal)
+    result = Scraper.get_signals("^GDAXI", 200, 0.025)
+    message = Message().alarm_message('dax', result.signal_now)
+    message += Message.get_alarms(result)
     await channel.send("debug " + message)
 
     # Treasury Yield 30
     # alarm
     channel = client.get_channel(channel_debug_id)
-    signal = Scraper().get_signal("TLT", 60)
-    message = Message().alarm_message('tlt', signal)
+    result = Scraper().get_signals("TLT", 60)
+    message = Message().alarm_message('tlt', result.signal_now)
+    message += Message.get_alarms(result)
     await channel.send("debug " + message)
 
     # DAX
@@ -73,6 +75,9 @@ async def on_ready():
 
     # SP500TR
     # alarm
+
+    #TODO funktioniert noch nicht, weil sich zwar der benutzte SMA übergeben lässt, aber die flags noch nicht zurÜckgesetzt werden
+    #denke zwei separate results objecte für den jeweiligen SMA könnten sinnvoller sein
     channel = client.get_channel(channel_debug_id)
     signal = Scraper().get_signal("^SP500TR", 190, 0.025)
     message = Message().alarm_message('sp500tr', signal)
@@ -106,36 +111,41 @@ async def jobs():
     # SP500
     # alarm
     channel = client.get_channel(channel_sp500_alarm_id)
-    signal = Scraper().get_signal("^GSPC", 200)
-    message = Message().alarm_message('sp500', signal)
+    result = Scraper().get_signals("^GSPC", 200)
+    message = Message().alarm_message('sp500', result.signal_now)
+    message += Message.get_alarms(result)
     await channel.send(message)
 
     # SP500 190 SMA with 2.5% offset
     # alarm
     channel = client.get_channel(channel_sp500_190_alarm_id)
-    signal = Scraper().get_signal("^SP500TR", 190, 0.025)
-    message = Message().alarm_message('sp500tr', signal)
+    result = Scraper().get_signals("^SP500TR", 190, 0.025)
+    message = Message().alarm_message('sp500tr', result.signal_now)
+    message += Message.get_alarms(result)
     await channel.send(message + " ^SP500TR, SMA = 190, offset = 2.5%")
 
     # NASDAQ
     # alarm
     channel = client.get_channel(channel_nasdaq_alarm_id)
-    signal = Scraper().get_signal("^NDX", 220)
-    message = Message().alarm_message('nasdaq', signal)
+    result = Scraper().get_signals("^NDX", 220)
+    message = Message().alarm_message('nasdaq', result.signal_now)
+    message += Message.get_alarms(result)
     await channel.send(message)
 
     # DAX
     # alarm
     channel = client.get_channel(channel_dax_alarm_id)
-    signal = Scraper().get_signal("^GDAXI", 200)
-    message = Message().alarm_message('dax', signal)
+    result = Scraper().get_signals("^GDAXI", 200)
+    message = Message().alarm_message('dax', result.signal_now)
+    message += Message.get_alarms(result)
     await channel.send(message)
 
     # Treasury Yield 30
     # alarm
     channel = client.get_channel(channel_tyx_alarm_id)
-    signal = Scraper().get_signal("TLT", 60)
-    message = Message().alarm_message('tlt', signal)
+    result = Scraper().get_signals("TLT", 60)
+    message = Message().alarm_message('tlt', result.signal_now)
+    message += Message.get_alarms(result)
     await channel.send(message)
 
 
