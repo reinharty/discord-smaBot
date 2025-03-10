@@ -9,6 +9,45 @@ from src.dataclasses.result import Result
 class Scraper:
 
     @staticmethod
+    def check_for_intraday_crossing(direction: str, intraday_data: Data, sma: float):
+
+        data = intraday_data.intraday
+
+        if data.empty:
+            print("check_for_intraday_crossing: No data available. intraday_data is empty!")
+            return False
+
+        data['Above_SMA'] = data['Close'] > sma
+
+        if direction == 'above_to_below':
+            cross = (data['Above_SMA'].shift(1) == True) & (data['Above_SMA'] == False)
+        elif direction == 'below_to_above':
+            cross = (data['Above_SMA'].shift(1) == False) & (data['Above_SMA'] == True)
+        else:
+            raise ValueError("Invalid direction. Use 'above_to_below' or 'below_to_above'.")
+        return cross.any()
+
+    @staticmethod
+    def check_for_nightly_crossing(direction: str, daily_data: Data, sma: float):
+
+        data = daily_data.daily
+
+        if data.empty:
+            print("check_for_nightly_crossing: No data available. daily_data is empty!")
+            return False
+
+        yesterday_close = data.iloc[-2]['Close']
+        today_open = data.iloc[-1]['Open']
+
+        if direction == 'above_to_below':
+            return yesterday_close > sma > today_open
+        elif direction == 'below_to_above':
+            return yesterday_close < sma < today_open
+        else:
+            raise ValueError("Invalid direction. Use 'above_to_below' or 'below_to_above'.")
+
+
+    @staticmethod
     def generate_signal(result: Result, offset: float=0.0)->str:
         if result.yesterday_close > (result.yesterday_sma * (1 - offset)) and result.current_price < (result.current_sma * (1 - offset)):
             return "sell"
@@ -30,6 +69,7 @@ class Scraper:
     def calculator(data: Data, sma_days: int) -> Result:
 
         sma_series = Scraper.calc_sma(data.daily, sma_days)
+        current_sma_value = sma_series.iloc[-1]
 
         current_price = data.intraday["Close"].iloc[-1]
         yesterday_price = data.daily["Close"].iloc[-2]
@@ -42,14 +82,14 @@ class Scraper:
         current_distance = Scraper.calc_diff_between_price_and_sma(current_price, current_sma)
         yesterday_distance = Scraper.calc_diff_between_price_and_sma(yesterday_price, yesterday_sma)
 
-        return Result(sma_days,
+        return Result(sma_days, current_sma_value,
                       current_price, yesterday_price,
                       current_sma, yesterday_sma,
                       today_diff, yesterday_diff,
                       current_distance, yesterday_distance)
 
     @staticmethod
-    def get_signal(ticker, sma_days=200, offset=0.0):
+    def get_signals(ticker, sma_days=200, offset=0.0):
 
         ticker_data = yf.Ticker(ticker)
         daily_data = ticker_data.history(period='12mo')
@@ -58,8 +98,14 @@ class Scraper:
         data = Data(daily_data, intraday_data)
         result = Scraper.calculator(data, sma_days)
 
-        signal = Scraper.generate_signal(result, offset)
-        return(signal)
+        # find signals
+        result.signal_now = Scraper.generate_signal(result, offset)
+        result.intraday_to_above = Scraper.check_for_intraday_crossing('below_to_above', data, result.sma_current_value)
+        result.intraday_to_below = Scraper.check_for_intraday_crossing('above_to_below', data, result.sma_current_value)
+        result.nightly_cross_to_above = Scraper.check_for_nightly_crossing('below_to_above', data, result.sma_current_value)
+        result.nightly_cross_to_below = Scraper.check_for_nightly_crossing('above_to_below', data, result.sma_current_value)
+
+        return(result)
 
     #TODO handle result object better so that it must not be generated twice
     @staticmethod
