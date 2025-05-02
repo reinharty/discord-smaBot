@@ -40,9 +40,9 @@ token = os.getenv('TOKEN')
 channels_of_tickers = {
     "^GSPC" : [channel_sp500_alarm_id, channel_sp500_report_id],
     "^SP500TR" : [channel_sp500_190_alarm_id, channel_sp500_190_report_id],
-    "nasdaq" : [channel_nasdaq_alarm_id, channel_nasdaq_report_id],
+    "^NDX" : [channel_nasdaq_alarm_id, channel_nasdaq_report_id],
     "^GDAXI" : [channel_dax_alarm_id, channel_dax_report_id],
-    "tlt" : [channel_tlt_alarm_id, channel_tlt_report_id]
+    "TLT" : [channel_tlt_alarm_id, channel_tlt_report_id]
 }
 
 
