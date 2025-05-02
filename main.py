@@ -84,30 +84,59 @@ async def on_ready():
     # SP500TR
     # alarm
 
-    #TODO funktioniert noch nicht, weil sich zwar der benutzte SMA übergeben lässt, aber die flags noch nicht zurÜckgesetzt werden
-    #denke zwei separate results objecte für den jeweiligen SMA könnten sinnvoller sein
-    channel = client.get_channel(channel_debug_id)
-    result = Scraper().get_signals("^SP500TR", 190, 0.025)
-    message = Message().alarm_message('sp500tr', result.signal_now)
-    sma_high = result.current_sma * (1+0.025)
-    sma_low = result.current_sma * (1-0.025)
-    result.current_sma = sma_high
-    sma_high_text = Message.get_alarms(result)
-    if sma_high_text != "":
-        message += "For high SMA:\n"
-        message += sma_high_text
-
-    result.current_sma = sma_low
-    sma_low_text = Message.get_alarms(result)
-    if sma_low_text != "":
-        message += "For low SMA:\n"
-        message += sma_low_text
-
-    await channel.send(message + " ^SP500TR, SMA = 190, offset = 2.5%")
-    # report
-    channel = client.get_channel(channel_debug_id)
-    message = Scraper().get_report("^SP500TR", 190, 0.025)
-    await channel.send(message + " ^SP500TR, SMA = 190, offset = 2.5%")
+    # channel = client.get_channel(channel_debug_id)
+    # result = Scraper.get_signals("^GDAXI", 200, 0.025)
+    # message = Message().alarm_message('^GDAXI', result.signal_now)
+    # message += Message.get_alarms(result)
+    # await channel.send("debug " + message)
+    #
+    # # Treasury Yield 30
+    # # alarm
+    # channel = client.get_channel(channel_debug_id)
+    # result = Scraper().get_signals("TLT", 60)
+    # message = Message().alarm_message('tlt', result.signal_now)
+    # message += Message.get_alarms(result)
+    # await channel.send("debug " + message)
+    #
+    # # DAX
+    # # report
+    # channel = client.get_channel(channel_debug_id)
+    # message = Scraper.get_report("^GDAXI", 200)
+    # await channel.send(message)
+    #
+    # # Treasury Yield 30
+    # # report
+    # channel = client.get_channel(channel_debug_id)
+    # message = Scraper.get_report("TLT", 60)
+    # await channel.send(message)
+    #
+    # # SP500TR
+    # # alarm
+    #
+    # #TODO funktioniert noch nicht, weil sich zwar der benutzte SMA übergeben lässt, aber die flags noch nicht zurÜckgesetzt werden
+    # #denke zwei separate results objecte für den jeweiligen SMA könnten sinnvoller sein
+    # channel = client.get_channel(channel_debug_id)
+    # result = Scraper().get_signals("^SP500TR", 190, 0.025)
+    # message = Message().alarm_message('^SP500TR', result.signal_now)
+    # sma_high = result.current_sma * (1+0.025)
+    # sma_low = result.current_sma * (1-0.025)
+    # result.current_sma = sma_high
+    # sma_high_text = Message.get_alarms(result)
+    # if sma_high_text != "":
+    #     message += "For high SMA:\n"
+    #     message += sma_high_text
+    #
+    # result.current_sma = sma_low
+    # sma_low_text = Message.get_alarms(result)
+    # if sma_low_text != "":
+    #     message += "For low SMA:\n"
+    #     message += sma_low_text
+    #
+    # await channel.send(message + " ^SP500TR, SMA = 190, offset = 2.5%")
+    # # report
+    # channel = client.get_channel(channel_debug_id)
+    # message = Scraper().get_report("^SP500TR", 190, 0.025)
+    # await channel.send(message + " ^SP500TR, SMA = 190, offset = 2.5%")
 
 
 
