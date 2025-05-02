@@ -2,9 +2,9 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Result:
+class SmaMetrics:
+
     sma_days: int
-    sma_current_value: float
     current_price: float
     yesterday_close: float
     current_sma: float
@@ -14,6 +14,9 @@ class Result:
     yesterday_diff: float
     current_distance: float
     yesterday_distance: float
+    #
+    ticker: str = ''
+    offset: float = 0.0
 
     # crossings
     signal_now: str = "hold"
