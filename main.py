@@ -56,7 +56,10 @@ async def on_ready():
     await debug_channel.send("version = 11.3.2025")
 
     await generateAndSendSignal("^GSPC", 200)
+    await generateAndSendSignal("^SP500TR", 190, 0.025)
+    await generateAndSendSignal("^NDX", 220)
     await generateAndSendSignal("^GDAXI", 200)
+    await generateAndSendSignal("TLT", 60)
 
     # channel = client.get_channel(channel_debug_id)
     # result = Scraper.get_signals("^GDAXI", 200, 0.025)
@@ -125,53 +128,20 @@ async def scheduler():
     while True:
         #schedule.run_pending()
         if pycron.is_now(scedule):
-            await jobs()
+            await signals()
             await reports()
             await asyncio.sleep(60)
         else:
             await asyncio.sleep(15)
 
 
-async def jobs():
-    # SP500
-    # alarm
-    channel = client.get_channel(channel_sp500_alarm_id)
-    result = Scraper().get_signals("^GSPC", 200)
-    message = Message().alarm_message('sp500', result.signal_now)
-    message += Message.get_alarms(result)
-    await channel.send(message)
+async def signals():
 
-    # SP500 190 SMA with 2.5% offset
-    # alarm
-    channel = client.get_channel(channel_sp500_190_alarm_id)
-    result = Scraper().get_signals("^SP500TR", 190, 0.025)
-    message = Message().alarm_message('sp500tr', result.signal_now)
-    message += Message.get_alarms(result)
-    await channel.send(message + " ^SP500TR, SMA = 190, offset = 2.5%")
-
-    # NASDAQ
-    # alarm
-    channel = client.get_channel(channel_nasdaq_alarm_id)
-    result = Scraper().get_signals("^NDX", 220)
-    message = Message().alarm_message('^NDX', result.signal_now)
-    message += Message.get_alarms(result)
-    await channel.send(message)
-
-    # DAX
-    # alarm
-    channel = client.get_channel(channel_dax_alarm_id)
-    result = Scraper().get_signals("^GDAXI", 200)
-    message = Message().alarm_message('^GDAXI', result.signal_now)
-    message += Message.get_alarms(result)
-    await channel.send(message)
-
-    # Treasury Yield 30
-    # alarm
-    channel = client.get_channel(channel_tlt_alarm_id)
-    result = Scraper().get_signals("TLT", 60)
-    message = Message().alarm_message('TLT', result.signal_now)
-    message += Message.get_alarms(result)
-    await channel.send(message)
+    await generateAndSendSignal("^GSPC", 200)
+    await generateAndSendSignal("^SP500TR", 190, 0.025)
+    await generateAndSendSignal("^NDX", 220)
+    await generateAndSendSignal("^GDAXI", 200)
+    await generateAndSendSignal("TLT", 60)
 
 
 async def reports():
