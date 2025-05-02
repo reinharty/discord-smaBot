@@ -145,35 +145,12 @@ async def signals():
 
 
 async def reports():
-    # SP500
-    # report
-    channel = client.get_channel(channel_sp500_report_id)
-    message = Scraper.get_report("^GSPC", 200)
-    await channel.send(message)
 
-    # SP500
-    # report
-    channel = client.get_channel(channel_sp500_190_report_id)
-    message = Scraper().get_report("^SP500TR", 190, 0.025)
-    await channel.send(message + " ^SP500TR, SMA = 190, offset = 2.5%")
-
-    # NASDAQ
-    # report
-    channel = client.get_channel(channel_nasdaq_report_id)
-    message = Scraper.get_report("^NDX", 220)
-    await channel.send(message)
-
-    # DAX
-    # report
-    channel = client.get_channel(channel_dax_report_id)
-    message = Scraper.get_report("^GDAXI", 200)
-    await channel.send(message)
-
-    # Treasury Yield 30
-    # report
-    channel = client.get_channel(channel_tlt_report_id)
-    message = Scraper.get_report("TLT", 60)
-    await channel.send(message)
+    await generateAndSendReport("^GSPC", 200)
+    await generateAndSendReport("^SP500TR", 190, 0.025)
+    await generateAndSendReport("^NDX", 220)
+    await generateAndSendReport("^GDAXI", 200)
+    await generateAndSendReport("TLT", 60)
 
 async def generateAndSendSignal(ticker, sma_days, offset=0.0):
 
@@ -181,6 +158,11 @@ async def generateAndSendSignal(ticker, sma_days, offset=0.0):
     result = Scraper().get_signals(ticker, sma_days)
     message = Message().alarm_message(ticker, result.signal_now)
     message += Message.get_alarms(result)
+    await channel.send(message)
+
+async def generateAndSendReport(ticker, sma_days, offset=0.0):
+    channel = client.get_channel(channels_of_tickers[ticker][1])
+    message = Scraper.get_report(ticker, sma_days, offset)
     await channel.send(message)
 
 #load_dotenv()
