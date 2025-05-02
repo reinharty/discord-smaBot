@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from message import Message
 from src.dataclasses.data import Data
-from src.dataclasses.result import Result
+from src.dataclasses.smametrics import SmaMetrics
 
 
 class Scraper:
@@ -48,7 +48,7 @@ class Scraper:
 
 
     @staticmethod
-    def generate_signal(result: Result, offset: float=0.0)->str:
+    def generate_signal(result: SmaMetrics, offset: float=0.0)->str:
         if result.yesterday_close > (result.yesterday_sma * (1 - offset)) and result.current_price < (result.current_sma * (1 - offset)):
             return "sell"
         if result.yesterday_close < (result.yesterday_sma * (1 + offset)) and result.current_price > (result.current_sma * (1 + offset)):
@@ -66,10 +66,9 @@ class Scraper:
         return abs(((price / sma) - 1) * 100)
 
     @staticmethod
-    def calculator(data: Data, sma_days: int) -> Result:
+    def calculator(data: Data, sma_days: int) -> SmaMetrics:
 
         sma_series = Scraper.calc_sma(data.daily, sma_days)
-        current_sma_value = sma_series.iloc[-1]
 
         current_price = data.intraday["Close"].iloc[-1]
         yesterday_price = data.daily["Close"].iloc[-2]
@@ -82,11 +81,11 @@ class Scraper:
         current_distance = Scraper.calc_diff_between_price_and_sma(current_price, current_sma)
         yesterday_distance = Scraper.calc_diff_between_price_and_sma(yesterday_price, yesterday_sma)
 
-        return Result(sma_days, current_sma_value,
-                      current_price, yesterday_price,
-                      current_sma, yesterday_sma,
-                      today_diff, yesterday_diff,
-                      current_distance, yesterday_distance)
+        return SmaMetrics(sma_days,
+                          current_price, yesterday_price,
+                          current_sma, yesterday_sma,
+                          today_diff, yesterday_diff,
+                          current_distance, yesterday_distance)
 
     @staticmethod
     def get_signals(ticker, sma_days=200, offset=0.0):
@@ -210,14 +209,14 @@ class Scraper:
         if intraday_data.empty is True:
             return "No data today"
 
-    def daily_report3(self, result: Result):
+    def daily_report3(self, result: SmaMetrics):
         message = Message.get_position(result)
         message = message + Message.get_distances(result)
         message += Message.get_direction(result)
 
         return message
 
-    def daily_report_with_offset(self, result: Result, offset):
+    def daily_report_with_offset(self, result: SmaMetrics, offset):
         message = Message.get_position(result)
         message = message + Message.get_distances_with_offset(result, offset)
         #message += Message.get_direction(result)
