@@ -125,7 +125,7 @@ class TestScraper(TestCase):
         data = Data(daily_data, intraday)
         result = Scraper.calculator(data, 200)
 
-        expected = "Price is 92.0 and **under** 200-SMA of 92.75499988555909.\n"
+        expected = "Price is 92.0 and **under** 200-SMA of 92.75.\n"
         self.assertEqual(expected, Message().get_position(result))
 
     def test_message_get_position_over_sma(self):
@@ -137,7 +137,7 @@ class TestScraper(TestCase):
         data = Data(daily_data, intraday)
         result = Scraper.calculator(data, 200)
 
-        expected = f"Price is 93.0 and **over** 200-SMA of 92.31499988555908.\n"
+        expected = f"Price is 93.0 and **over** 200-SMA of 92.31.\n"
         self.assertEqual(expected, Message().get_position(result))
 
     def test_Message(self):
