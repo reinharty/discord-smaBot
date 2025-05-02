@@ -153,7 +153,7 @@ async def jobs():
     # alarm
     channel = client.get_channel(channel_nasdaq_alarm_id)
     result = Scraper().get_signals("^NDX", 220)
-    message = Message().alarm_message('nasdaq', result.signal_now)
+    message = Message().alarm_message('^NDX', result.signal_now)
     message += Message.get_alarms(result)
     await channel.send(message)
 
@@ -161,7 +161,7 @@ async def jobs():
     # alarm
     channel = client.get_channel(channel_dax_alarm_id)
     result = Scraper().get_signals("^GDAXI", 200)
-    message = Message().alarm_message('dax', result.signal_now)
+    message = Message().alarm_message('^GDAXI', result.signal_now)
     message += Message.get_alarms(result)
     await channel.send(message)
 
@@ -169,7 +169,7 @@ async def jobs():
     # alarm
     channel = client.get_channel(channel_tlt_alarm_id)
     result = Scraper().get_signals("TLT", 60)
-    message = Message().alarm_message('tlt', result.signal_now)
+    message = Message().alarm_message('TLT', result.signal_now)
     message += Message.get_alarms(result)
     await channel.send(message)
 
