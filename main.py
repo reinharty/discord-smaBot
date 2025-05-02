@@ -61,31 +61,12 @@ async def on_ready():
     await generateAndSendSignal("^GDAXI", 200)
     await generateAndSendSignal("TLT", 60)
 
-    # channel = client.get_channel(channel_debug_id)
-    # result = Scraper.get_signals("^GDAXI", 200, 0.025)
-    # message = Message().alarm_message('^GDAXI', result.signal_now)
-    # message += Message.get_alarms(result)
-    # await channel.send("debug " + message)
-    #
-    # # Treasury Yield 30
-    # # alarm
-    # channel = client.get_channel(channel_debug_id)
-    # result = Scraper().get_signals("TLT", 60)
-    # message = Message().alarm_message('tlt', result.signal_now)
-    # message += Message.get_alarms(result)
-    # await channel.send("debug " + message)
-    #
-    # # DAX
-    # # report
-    # channel = client.get_channel(channel_debug_id)
-    # message = Scraper.get_report("^GDAXI", 200)
-    # await channel.send(message)
-    #
-    # # Treasury Yield 30
-    # # report
-    # channel = client.get_channel(channel_debug_id)
-    # message = Scraper.get_report("TLT", 60)
-    # await channel.send(message)
+    await generateAndSendReport("^GSPC", 200)
+    await generateAndSendReport("^SP500TR", 190, 0.025)
+    await generateAndSendReport("^NDX", 220)
+    await generateAndSendReport("^GDAXI", 200)
+    await generateAndSendReport("TLT", 60)
+
     #
     # # SP500TR
     # # alarm
