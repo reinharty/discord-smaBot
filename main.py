@@ -30,7 +30,7 @@ channel_nasdaq_report_id = int(os.getenv('NASDAQ_REPORT'))
 channel_dax_alarm_id = int(os.getenv('DAX_ALARM_200'))
 channel_dax_report_id = int(os.getenv('DAX_REPORT'))
 
-channel_tyx_alarm_id = int(os.getenv('TYX_ALARM_60'))
+channel_tlt_alarm_id = int(os.getenv('TYX_ALARM_60'))
 channel_tlt_report_id = int(os.getenv('TYX_REPORT'))
 
 channel_debug_id = int(os.getenv('DEBUG'))
