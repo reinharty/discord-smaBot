@@ -45,7 +45,7 @@ async def on_ready():
     debug_channel = client.get_channel(channel_debug_id)
     await debug_channel.send("Online again at " + datetime.today().strftime("%Y-%m-%d-%H:%M:%S") + " " + scedule)
     await debug_channel.send("yfinance version = " + yf.__version__)
-    await debug_channel.send("version = 10.3.2025")
+    await debug_channel.send("version = 11.3.2025")
 
     channel = client.get_channel(channel_debug_id)
     result = Scraper.get_signals("^GDAXI", 200, 0.025)
@@ -79,8 +79,22 @@ async def on_ready():
     #TODO funktioniert noch nicht, weil sich zwar der benutzte SMA übergeben lässt, aber die flags noch nicht zurÜckgesetzt werden
     #denke zwei separate results objecte für den jeweiligen SMA könnten sinnvoller sein
     channel = client.get_channel(channel_debug_id)
-    signal = Scraper().get_signal("^SP500TR", 190, 0.025)
-    message = Message().alarm_message('sp500tr', signal)
+    result = Scraper().get_signals("^SP500TR", 190, 0.025)
+    message = Message().alarm_message('sp500tr', result.signal_now)
+    sma_high = result.current_sma * (1+0.025)
+    sma_low = result.current_sma * (1-0.025)
+    result.current_sma = sma_high
+    sma_high_text = Message.get_alarms(result)
+    if sma_high_text != "":
+        message += "For high SMA:\n"
+        message += sma_high_text
+
+    result.current_sma = sma_low
+    sma_low_text = Message.get_alarms(result)
+    if sma_low_text != "":
+        message += "For low SMA:\n"
+        message += sma_low_text
+
     await channel.send(message + " ^SP500TR, SMA = 190, offset = 2.5%")
     # report
     channel = client.get_channel(channel_debug_id)

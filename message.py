@@ -24,13 +24,13 @@ class Message:
         return ''
 
     @staticmethod
-    def get_position(result: Result)-> str:
+    def get_position(result: Result) -> str:
 
         position = "over" if result.current_price > result.current_sma else "under"
-        return f"Price is {result.current_price} and **{position}** {result.sma_days}-SMA of {result.current_sma}.\n"
+        return f"Price is {result.current_price} and **{position}** {result.sma_days}-SMA of {result.current_sma:.2f}.\n"
 
     @staticmethod
-    def get_distances(result: Result)->str:
+    def get_distances(result: Result) -> str:
 
         current_distance = "{:.2f}".format(result.current_distance)
         yesterday_distance = "{:.2f}".format(result.yesterday_distance)
@@ -44,12 +44,12 @@ class Message:
         return f"Gap between price and SMA since yesterday: **{gap_change_direction}**\n"
 
     @staticmethod
-    def get_distances_with_offset(result: Result, offset: float)->str:
+    def get_distances_with_offset(result: Result, offset: float) -> str:
 
-        current_sma_high = result.current_sma*(1+offset)
-        current_sma_low = result.current_sma*(1-offset)
-        yesterday_sma_high = result.yesterday_sma*(1+offset)
-        yesterday_sma_low = result.yesterday_sma*(1-offset)
+        current_sma_high = result.current_sma * (1 + offset)
+        current_sma_low = result.current_sma * (1 - offset)
+        yesterday_sma_high = result.yesterday_sma * (1 + offset)
+        yesterday_sma_low = result.yesterday_sma * (1 - offset)
 
         current_distance_high = result.current_price - current_sma_high
         current_distance_low = result.current_price - current_sma_low
@@ -61,26 +61,20 @@ class Message:
         yesterday_diff_high = abs(((result.current_price / yesterday_sma_high) - 1) * 100)
         yesterday_diff_low = abs(((result.current_price / yesterday_sma_low) - 1) * 100)
 
-        if current_distance_low <= 0.0 and current_distance_high <=0.0:
+        if current_distance_low <= 0.0 and current_distance_high <= 0.0:
 
-            position_text = "Price is **under** both SMAs\n"
+            position_text = "Price is **under** both offsets\n"
         elif current_distance_low >= 0.0 and current_distance_high >= 0.0:
-            position_text = "Price is **above** both SMAs\n"
+            position_text = "Price is **above** both offsets\n"
         else:
-            position_text = "Price is **between** high and low SMA\n"
+            position_text = "Price is **between** high and low offsets\n"
 
-        text = f"""Differences between today's closing price and {result.sma_days}-day SMAs with {offset}% offset: 
-        Current SMA without offset: {result.current_sma}
-        SMA, distance in points, distance in percentage
-        Current high sma: {current_sma_high}, {current_distance_high:.2f}, **{current_diff_high:.2f}%**
-        Current low sma: {current_sma_low}, {current_distance_low:.2f}\t**{current_diff_low:.2f}%**
-        Yesterday high sma: {yesterday_sma_high}, {yesterday_distance_high:.2f}\t{yesterday_diff_high:.2f}%
-        Yesterday low sma: {yesterday_sma_low}, {yesterday_distance_low:.2f}\t{yesterday_diff_low:.2f}%\n"""
+        text = f"""Differences between today's closing price and {result.sma_days}-day SMAs with {offset * 100}% offset: \nCurrent SMA without offset: {result.current_sma:.2f}\nSMA, distance in points, distance in percentage\n\nCurrent high sma: {current_sma_high:.2f}, {current_distance_high:.2f}, **{current_diff_high:.2f}%**\nCurrent low sma: {current_sma_low:.2f}, {current_distance_low:.2f}\t**{current_diff_low:.2f}%**\n\nYesterday high sma: {yesterday_sma_high:.2f}, {yesterday_distance_high:.2f}\t{yesterday_diff_high:.2f}%\nYesterday low sma: {yesterday_sma_low:.2f}, {yesterday_distance_low:.2f}\t{yesterday_diff_low:.2f}%\n\n"""
 
-        return position_text+text
+        return position_text + text
 
     @staticmethod
-    def get_alarms(result: Result)->str:
+    def get_alarms(result: Result) -> str:
         message = ""
         if result.nightly_cross_to_above or result.nightly_cross_to_below or result.intraday_to_above or result.intraday_to_below == True:
             message += '@everyone \n'
