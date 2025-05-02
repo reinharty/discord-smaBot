@@ -99,10 +99,10 @@ class Scraper:
 
         # find signals
         result.signal_now = Scraper.generate_signal(result, offset)
-        result.intraday_to_above = Scraper.check_for_intraday_crossing('below_to_above', data, result.sma_current_value)
-        result.intraday_to_below = Scraper.check_for_intraday_crossing('above_to_below', data, result.sma_current_value)
-        result.nightly_cross_to_above = Scraper.check_for_nightly_crossing('below_to_above', data, result.sma_current_value)
-        result.nightly_cross_to_below = Scraper.check_for_nightly_crossing('above_to_below', data, result.sma_current_value)
+        result.intraday_to_above = Scraper.check_for_intraday_crossing('below_to_above', data, result.current_sma)
+        result.intraday_to_below = Scraper.check_for_intraday_crossing('above_to_below', data, result.current_sma)
+        result.nightly_cross_to_above = Scraper.check_for_nightly_crossing('below_to_above', data, result.current_sma)
+        result.nightly_cross_to_below = Scraper.check_for_nightly_crossing('above_to_below', data, result.current_sma)
 
         return(result)
 
