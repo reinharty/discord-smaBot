@@ -48,6 +48,9 @@ channels_of_tickers = {
 
 @client.event
 async def on_ready():
+
+    ## debug section start
+
     print('Logged in as {0.user}'.format(client))
     #schedule_daily_task()  # Schedule the daily message
     debug_channel = client.get_channel(channel_debug_id)
@@ -55,51 +58,20 @@ async def on_ready():
     await debug_channel.send("yfinance version = " + yf.__version__)
     await debug_channel.send("version = 11.3.2025")
 
-    await generateAndSendSignal("^GSPC", 200)
-    await generateAndSendSignal("^SP500TR", 190, 0.025)
-    await generateAndSendSignal("^NDX", 220)
-    await generateAndSendSignal("^GDAXI", 200)
-    await generateAndSendSignal("TLT", 60)
+    await generateAndSendSignal("^GSPC", 200, debug = True)
+    await generateAndSendSignal("^SP500TR", 190, 0.025, True)
+    await generateAndSendSignal("^NDX", 220, debug = True)
+    await generateAndSendSignal("^GDAXI", 200, debug = True)
+    await generateAndSendSignal("TLT", 60, debug = True)
 
-    await generateAndSendReport("^GSPC", 200)
-    await generateAndSendReport("^SP500TR", 190, 0.025)
-    await generateAndSendReport("^NDX", 220)
-    await generateAndSendReport("^GDAXI", 200)
-    await generateAndSendReport("TLT", 60)
+    await generateAndSendReport("^GSPC", 200, debug = True)
+    await generateAndSendReport("^SP500TR", 190, 0.025, True)
+    await generateAndSendReport("^NDX", 220, debug = True)
+    await generateAndSendReport("^GDAXI", 200, debug = True)
+    await generateAndSendReport("TLT", 60, debug = True)
 
-    #
-    # # SP500TR
-    # # alarm
-    #
-    # #TODO funktioniert noch nicht, weil sich zwar der benutzte SMA übergeben lässt, aber die flags noch nicht zurÜckgesetzt werden
-    # #denke zwei separate results objecte für den jeweiligen SMA könnten sinnvoller sein
-    # channel = client.get_channel(channel_debug_id)
-    # result = Scraper().get_signals("^SP500TR", 190, 0.025)
-    # message = Message().alarm_message('^SP500TR', result.signal_now)
-    # sma_high = result.current_sma * (1+0.025)
-    # sma_low = result.current_sma * (1-0.025)
-    # result.current_sma = sma_high
-    # sma_high_text = Message.get_alarms(result)
-    # if sma_high_text != "":
-    #     message += "For high SMA:\n"
-    #     message += sma_high_text
-    #
-    # result.current_sma = sma_low
-    # sma_low_text = Message.get_alarms(result)
-    # if sma_low_text != "":
-    #     message += "For low SMA:\n"
-    #     message += sma_low_text
-    #
-    # await channel.send(message + " ^SP500TR, SMA = 190, offset = 2.5%")
-    # # report
-    # channel = client.get_channel(channel_debug_id)
-    # message = Scraper().get_report("^SP500TR", 190, 0.025)
-    # await channel.send(message + " ^SP500TR, SMA = 190, offset = 2.5%")
+    ## debug section end
 
-
-
-    # await jobs()
-    # await reports()
     await scheduler()  # Start the scheduler loop
 
 
@@ -133,16 +105,22 @@ async def reports():
     await generateAndSendReport("^GDAXI", 200)
     await generateAndSendReport("TLT", 60)
 
-async def generateAndSendSignal(ticker, sma_days, offset=0.0):
+async def generateAndSendSignal(ticker, sma_days, offset=0.0, debug=False):
 
-    channel = client.get_channel(channels_of_tickers[ticker][0])
+    if debug:
+        channel = client.get_channel(channel_debug_id)
+    else:
+        channel = client.get_channel(channels_of_tickers[ticker][0])
     result = Scraper().get_signals(ticker, sma_days)
     message = Message().alarm_message(ticker, result.signal_now)
     message += Message.get_alarms(result)
     await channel.send(message)
 
-async def generateAndSendReport(ticker, sma_days, offset=0.0):
-    channel = client.get_channel(channels_of_tickers[ticker][1])
+async def generateAndSendReport(ticker, sma_days, offset=0.0, debug=False):
+    if debug:
+        channel = client.get_channel(channel_debug_id)
+    else:
+        channel = client.get_channel(channels_of_tickers[ticker][1])
     message = Scraper.get_report(ticker, sma_days, offset)
     await channel.send(message)
 
