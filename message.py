@@ -13,7 +13,7 @@ class Message:
     def alarm_message(self, index, signal):
         message = '@everyone \n'
         if signal == 'hold':
-            message = 'hold' + " " + self.index_dict[index][0]
+            message = 'hold still' + " " + self.index_dict[index][0]
         elif signal == 'buy' or signal == 'sell':
             message = signal + " " + self.index_dict[index][0] + " " + message + self.index_dict[index][1]
         else:
