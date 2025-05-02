@@ -56,7 +56,7 @@ async def on_ready():
     debug_channel = client.get_channel(channel_debug_id)
     await debug_channel.send("Online again at " + datetime.today().strftime("%Y-%m-%d-%H:%M:%S") + " " + scedule)
     await debug_channel.send("yfinance version = " + yf.__version__)
-    await debug_channel.send("version = 11.3.2025")
+    await debug_channel.send("version = 01.05.2025")
 
     await generateAndSendSignal("^GSPC", 200, debug = True)
     await generateAndSendSignal("^SP500TR", 190, 0.025, True)
