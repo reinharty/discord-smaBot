@@ -167,7 +167,7 @@ async def jobs():
 
     # Treasury Yield 30
     # alarm
-    channel = client.get_channel(channel_tyx_alarm_id)
+    channel = client.get_channel(channel_tlt_alarm_id)
     result = Scraper().get_signals("TLT", 60)
     message = Message().alarm_message('tlt', result.signal_now)
     message += Message.get_alarms(result)
