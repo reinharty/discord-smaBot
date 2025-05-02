@@ -1,4 +1,4 @@
-from src.dataclasses.result import Result
+from src.dataclasses.smametrics import SmaMetrics
 
 
 class Message:
