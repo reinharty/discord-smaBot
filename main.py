@@ -55,34 +55,8 @@ async def on_ready():
     await debug_channel.send("yfinance version = " + yf.__version__)
     await debug_channel.send("version = 11.3.2025")
 
-    channel = client.get_channel(channel_debug_id)
-    result = Scraper.get_signals("^GDAXI", 200, 0.025)
-    message = Message().alarm_message('dax', result.signal_now)
-    message += Message.get_alarms(result)
-    await channel.send("debug " + message)
-
-    # Treasury Yield 30
-    # alarm
-    channel = client.get_channel(channel_debug_id)
-    result = Scraper().get_signals("TLT", 60)
-    message = Message().alarm_message('tlt', result.signal_now)
-    message += Message.get_alarms(result)
-    await channel.send("debug " + message)
-
-    # DAX
-    # report
-    channel = client.get_channel(channel_debug_id)
-    message = Scraper.get_report("^GDAXI", 200)
-    await channel.send(message)
-
-    # Treasury Yield 30
-    # report
-    channel = client.get_channel(channel_debug_id)
-    message = Scraper.get_report("TLT", 60)
-    await channel.send(message)
-
-    # SP500TR
-    # alarm
+    await generateAndSendSignal("^GSPC", 200)
+    await generateAndSendSignal("^GDAXI", 200)
 
     # channel = client.get_channel(channel_debug_id)
     # result = Scraper.get_signals("^GDAXI", 200, 0.025)
@@ -231,6 +205,13 @@ async def reports():
     message = Scraper.get_report("TLT", 60)
     await channel.send(message)
 
+async def generateAndSendSignal(ticker, sma_days, offset=0.0):
+
+    channel = client.get_channel(channels_of_tickers[ticker][0])
+    result = Scraper().get_signals(ticker, sma_days)
+    message = Message().alarm_message(ticker, result.signal_now)
+    message += Message.get_alarms(result)
+    await channel.send(message)
 
 #load_dotenv()
 client.run(token)
