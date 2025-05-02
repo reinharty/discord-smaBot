@@ -24,13 +24,13 @@ class Message:
         return ''
 
     @staticmethod
-    def get_position(result: Result) -> str:
+    def get_position(result: SmaMetrics) -> str:
 
         position = "over" if result.current_price > result.current_sma else "under"
         return f"Price is {result.current_price} and **{position}** {result.sma_days}-SMA of {result.current_sma:.2f}.\n"
 
     @staticmethod
-    def get_distances(result: Result) -> str:
+    def get_distances(result: SmaMetrics) -> str:
 
         current_distance = "{:.2f}".format(result.current_distance)
         yesterday_distance = "{:.2f}".format(result.yesterday_distance)
@@ -38,13 +38,13 @@ class Message:
         return f"Difference between today's closing price and {result.sma_days}-day SMA: {result.current_diff:.2f}\t**{current_distance}%**\nDifference between yesterday's closing price and {result.sma_days}-day SMA: {result.yesterday_diff:.2f}\t{yesterday_distance}%\n"
 
     @staticmethod
-    def get_direction(result: Result):
+    def get_direction(result: SmaMetrics):
         gap_change_direction = "Increased" if abs(result.current_diff) > abs(result.yesterday_diff) else "Decreased"
 
         return f"Gap between price and SMA since yesterday: **{gap_change_direction}**\n"
 
     @staticmethod
-    def get_distances_with_offset(result: Result, offset: float) -> str:
+    def get_distances_with_offset(result: SmaMetrics, offset: float) -> str:
 
         current_sma_high = result.current_sma * (1 + offset)
         current_sma_low = result.current_sma * (1 - offset)
@@ -74,7 +74,7 @@ class Message:
         return position_text + text
 
     @staticmethod
-    def get_alarms(result: Result) -> str:
+    def get_alarms(result: SmaMetrics) -> str:
         message = ""
         if result.nightly_cross_to_above or result.nightly_cross_to_below or result.intraday_to_above or result.intraday_to_below == True:
             message += '@everyone \n'
