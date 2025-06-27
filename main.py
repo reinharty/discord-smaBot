@@ -112,8 +112,8 @@ async def generateAndSendSignal(ticker, sma_days, offset=0.0, debug=False):
     else:
         channel = client.get_channel(channels_of_tickers[ticker][0])
     result = Scraper().get_signals(ticker, sma_days)
-    message = Message().alarm_message(ticker, result.signal_now)
-    message += Message.get_alarms(result)
+    #message = ""#Message().alarm_message(ticker, result.signal_now)
+    message = Message.get_alarms(result)
     await channel.send(message)
 
 async def generateAndSendReport(ticker, sma_days, offset=0.0, debug=False):
