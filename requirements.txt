@@ -1,4 +1,4 @@
-yfinance == 0.2.54
+yfinance == 0.2.61
 discord.py
 pycron~=3.0.0
 pandas~=2.2.3
