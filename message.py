@@ -78,6 +78,8 @@ class Message:
         message = ""
         if result.nightly_cross_to_above or result.nightly_cross_to_below or result.intraday_to_above or result.intraday_to_below == True:
             message += '@everyone \n'
+        else:
+            message += 'No crossings detected'
 
         if result.nightly_cross_to_above:
             message += 'Price crossed **above SMA** between yesterday Close and todays Open\n'
