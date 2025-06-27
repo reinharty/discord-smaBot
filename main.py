@@ -58,17 +58,17 @@ async def on_ready():
     await debug_channel.send("yfinance version = " + yf.__version__)
     await debug_channel.send("version = 01.05.2025")
 
-    await generateAndSendSignal("^GSPC", 200, debug = True)
-    await generateAndSendSignal("^SP500TR", 190, 0.025, True)
+    # await generateAndSendSignal("^GSPC", 200, debug = True)
+    # await generateAndSendSignal("^SP500TR", 190, 0.025, True)
     await generateAndSendSignal("^NDX", 220, debug = True)
-    await generateAndSendSignal("^GDAXI", 200, debug = True)
-    await generateAndSendSignal("TLT", 60, debug = True)
+    # await generateAndSendSignal("^GDAXI", 200, debug = True)
+    # await generateAndSendSignal("TLT", 60, debug = True)
 
-    await generateAndSendReport("^GSPC", 200, debug = True)
-    await generateAndSendReport("^SP500TR", 190, 0.025, True)
-    await generateAndSendReport("^NDX", 220, debug = True)
-    await generateAndSendReport("^GDAXI", 200, debug = True)
-    await generateAndSendReport("TLT", 60, debug = True)
+    # await generateAndSendReport("^GSPC", 200, debug = True)
+    # await generateAndSendReport("^SP500TR", 190, 0.025, True)
+    # await generateAndSendReport("^NDX", 220, debug = True)
+    # await generateAndSendReport("^GDAXI", 200, debug = True)
+    # await generateAndSendReport("TLT", 60, debug = True)
 
     ## debug section end
 
