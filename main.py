@@ -91,7 +91,7 @@ async def scheduler():
 async def signals():
 
     await generateAndSendSignal("^GSPC", 200)
-    await generateAndSendSignal("^SP500TR", 190, 0.025)
+    #await generateAndSendSignal("^SP500TR", 190, 0.025)
     await generateAndSendSignal("^NDX", 220)
     await generateAndSendSignal("^GDAXI", 200)
     await generateAndSendSignal("TLT", 60)
